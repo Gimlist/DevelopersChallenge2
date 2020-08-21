@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<script src="~/Scripts/AngularJS/angular.min.js"></script>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/Statement/StatementController.js"></script>
+<script src="~/Scripts/Statement/Service.js"></script>
+<div ng-app="Statement" ng-controller="StatementController">
+
+    @*Upload File*@
+    <div>
+        <label>Select Files for Upload (.OFX)</label>
+        <input type="file" onchange="angular.element(this).scope().SendFile(this)" multiple />
+        <div ng-show="(FileName)" class="well well-sm">
+            <span class="glyphicon glyphicon-file"></span>
+            {{FileName}}
+        </div>
+        <div ng-switch="statusUpload">
+            <span ng-switch-when="0" class="alert alert-info">File type not alowed. Send files: (.ofx)</span>
+            <span ng-switch-when="2" class="alert alert-success">Upload {{FileName}} with sucess </span>
+            <span ng-switch-when="3" class="alert alert-danger">Error to send file</span>
+        </div>
+    </div>
+
+    <br />
+    <div>
+        @*List Transactions*@
+        <div ng-if="StatementsList">
+            <div>
+                <blockquote>
+                    <p>Total Transactions:{{StatementsList.length}}</p>
+                </blockquote>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Transaction Type</th>
+                        <th>
+                            Date Posted
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Value
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="transaction in StatementsList">
+                        <td ng-switch="transaction.TRNType">
+                            <span ng-switch-when="0" class="label label-danger">Debit</span>
+                            <span ng-switch-when="1" class="label label-success">Credit</span>
+                        </td>
+                        <td>
+                            <div class="label label-primary">
+                                {{transaction.DtPosted}}
+                            </div>
+                        </td>
+                        <td>
+                            <em>
+                                {{transaction.Memo}}
+                            </em>
+                        </td>
+                        <td>
+                            <div class="label label-danger" ng-if="transaction.TRNAMT.includes('-')">
+                                {{transaction.TRNAMT}}
+                            </div>
+                            <div class="label label-success" ng-if="!transaction.TRNAMT.includes('-')">
+                                {{transaction.TRNAMT}}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
